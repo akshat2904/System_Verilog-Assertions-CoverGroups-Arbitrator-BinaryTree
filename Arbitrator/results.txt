@@ -1,0 +1,82 @@
+/apps/synopsys/VCSMX/bin/vcs
+
+Warning-[LNX_OS_VERUN] Unsupported Linux version
+  Linux version 'Fedora release 24 (Twenty Four)' is not supported on 'x86_64'
+  officially, assuming linux compatibility by default. Set VCS_ARCH_OVERRIDE 
+  to linux or suse32 to override.
+  Please refer to release notes for information on supported platforms.
+
+
+Warning-[LINX_KRNL] Unsupported Linux kernel
+  Linux kernel '4.8.11-200.fc24.x86_64' is not supported.
+  Supported versions are 2.4* or 2.6*.
+
+                         Chronologic VCS (TM)
+           Version I-2014.03-2 -- Sat Dec 10 14:03:10 2016
+               Copyright (c) 1991-2014 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+Parsing design file 'top.sv'
+Parsing included file 'bmif.sv'.
+Back to file 'top.sv'.
+Parsing included file 'svif.sv'.
+Back to file 'top.sv'.
+Parsing included file 'bmx.sv'.
+Back to file 'top.sv'.
+Parsing included file 'slvx.sv'.
+Back to file 'top.sv'.
+Parsing included file 'arb.sv'.
+Back to file 'top.sv'.
+Top Level Modules:
+       top
+No TimeScale specified
+
+Warning-[INTFDV] VCD dumping of interface/program/package
+  Selective VCD dumping of interface 'bmif' is not supported.  Selective VCD 
+  dumping for interfaces, packages and programs is not supported.   Results 
+  are not guaranteed.
+  Use VPD or FSDB dumping, recompile with +vcsd, or use full VCD dumping 
+  '$dumpvars(0)'.
+
+Notice: Ports coerced to inout, use -notice for details
+Starting vcs inline pass...
+7 modules and 0 UDP read.
+	However, due to incremental compilation, only 1 module needs to be compiled.
+recompiling module top because:
+	This module or some inlined child module(s) has/have been modified.
+rm -f _csrc*.so linux_scvhdl_*.so pre_vcsobj_*.so share_vcsobj_*.so
+ld -m elf_i386 -shared -o .//../simv.daidir//_csrc1.so --whole-archive _vcsobj_1_1.a  --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//_csrc0.so 5NrI_d.o 5NrIB_d.o SIM_l.o  
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_1_1.so --whole-archive pre_vcsobj_1_1.a --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_1_2.so --whole-archive pre_vcsobj_1_2.a --no-whole-archive
+if [ -x ../simv ]; then chmod -x ../simv; fi
+g++  -o ../simv  -m32 -m32   -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/simv.daidir/ -Wl,-rpath='$ORIGIN'/simv.daidir//scsim.db.dir  _csrc1.so _csrc0.so   pre_vcsobj_1_1.so pre_vcsobj_1_2.so  rmapats_mop.o rmapats.o rmar.o           /apps/synopsys/VCSMX/linux/lib/libzerosoft_rt_stubs.so /apps/synopsys/VCSMX/linux/lib/libvirsim.so /apps/synopsys/VCSMX/linux/lib/librterrorinf.so /apps/synopsys/VCSMX/linux/lib/libsnpsmalloc.so    /apps/synopsys/VCSMX/linux/lib/libvcsnew.so /apps/synopsys/VCSMX/linux/lib/libuclinative.so   -Wl,-whole-archive /apps/synopsys/VCSMX/linux/lib/libvcsucli.so -Wl,-no-whole-archive          /apps/synopsys/VCSMX/linux/lib/vcs_save_restore_new.o /apps/synopsys/VCSMX/linux/lib/ctype-stubs_32.a -ldl  -lc -lm -lpthread -ldl 
+../simv up to date
+CPU time: .202 seconds to compile + .073 seconds to elab + .213 seconds to link
+Chronologic VCS simulator copyright 1991-2014
+Contains Synopsys proprietary information.
+Compiler version I-2014.03-2; Runtime version I-2014.03-2;  Dec 10 14:03 2016
+ For master           0 to slave           0 reads    8193 writes    7506
+ For master           0 to slave           1 reads    8382 writes    7525
+ For master           0 to slave           2 reads    8185 writes    7341
+ For master           0 to slave           3 reads    8186 writes    7404
+ For master           1 to slave           0 reads    1832 writes    1727
+ For master           1 to slave           1 reads    1719 writes    1703
+ For master           1 to slave           2 reads    1748 writes    1777
+ For master           1 to slave           3 reads    1790 writes    1693
+ For master           2 to slave           0 reads     674 writes     781
+ For master           2 to slave           1 reads     730 writes     700
+ For master           2 to slave           2 reads     704 writes     712
+ For master           2 to slave           3 reads     696 writes     715
+ For master           3 to slave           0 reads    2186 writes    2170
+ For master           3 to slave           1 reads    2264 writes    2129
+ For master           3 to slave           2 reads    2178 writes    2226
+ For master           3 to slave           3 reads    2221 writes    2198
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 1000001
+CPU Time:      0.960 seconds;       Data structure size:   0.0Mb
+Sat Dec 10 14:03:23 2016
