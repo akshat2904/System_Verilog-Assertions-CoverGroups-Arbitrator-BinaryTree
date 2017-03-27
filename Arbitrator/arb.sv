@@ -24,28 +24,13 @@ module arb (bmif.mstrR m0, bmif.mstrR m1, bmif.mstrR m2, bmif.mstrR m3, svif.slv
                     if (m1.grant == 1) m1_bid = m1_bid - m1_req_reg;
                     if (m2.grant == 1) m2_bid = m2_bid - m2_req_reg;
                     if (m3.grant == 1) m3_bid = m3_bid - m3_req_reg;
-                
-                /*if ((counter0 = 60) && (m0_bid = amt)) m0.grant = 1;
-                if ((counter1 = 60) && (m1_bid = amt)) m1.grant = 1;
-                if ((counter2 = 60) && (m2_bid = amt)) m2.grant = 1;
-                if ((counter3 = 60) && (m3_bid = amt)) m3.grant = 1; */
             end
     end
     
     always @(*) begin
     
         m0_req_reg = m0.req; m1_req_reg = m1.req; m2_req_reg = m2.req; m3_req_reg = m3.req;
-        /* if (m0.xfr == 1) counter0 = counter0 + 1;
-         else if ((m0.xfr == 1) && (m1.xfr == 1)) counter1 = counter1 + 1;
-         else if ((m0.xfr == 1) && m2.xfr == 1) counter2 = counter2 + 1;
-         else if ((m0.xfr == 1) && (m3.xfr == 1)) counter3 = counter3 + 1; */
-         
-         /* if (counter0 == 60) begin m0.grant = 1; m1.grant = 0; m2.grant = 0; m3.grant = 0; m0_bid = m0_bid - m0_req_reg; counter0 = 0; end
-         if (counter1 == 60) begin m0.grant = 0; m1.grant = 1; m2.grant = 0; m3.grant = 0; m1_bid = m1_bid - m1_req_reg; counter1 = 0; end
-         if (counter2 == 60) begin m0.grant = 0; m1.grant = 0; m2.grant = 1; m3.grant = 0; m2_bid = m2_bid - m2_req_reg; counter2 = 0; end
-         if (counter3 == 60) begin m0.grant = 0; m1.grant = 0; m2.grant = 0; m3.grant = 1; m3_bid = m3_bid - m3_req_reg; counter3 = 0; end */
-        
-        
+                
         if (m0_bid < m0_req_reg) begin m0_bid = 1; m0_req_reg = 1; end
         else if (m1_bid < m1_req_reg) begin m1_bid = 1; m1_req_reg = 1; end
         else if (m2_bid < m2_req_reg) begin m2_bid = 1; m2_req_reg = 1; end
@@ -118,33 +103,7 @@ module arb (bmif.mstrR m0, bmif.mstrR m1, bmif.mstrR m2, bmif.mstrR m3, svif.slv
                     end
             end
         end
-
-         /*if(counter0 == 60) begin
-            m0.grant = 1'b1; m1.grant = 1'b0; m2.grant = 1'b0; m3.grant = 1'b0;
-            m0_bid = m0_req_reg - m0.req;
-            counter0 = 0;
-            if (m0_bid < 1) m0_bid = 1;
-         end
-         else if(counter1 == 60) begin
-            m0.grant = 1'b0; m1.grant = 1'b1; m2.grant = 1'b0; m3.grant = 1'b0;
-            m1_bid = m1_req_reg - m1.req;
-            counter0 = 0;
-            if (m1_bid < 1) m1_bid = 1;
-         end
-         else if(counter2 == 60) begin
-            m0.grant = 1'b0; m1.grant = 1'b0; m2.grant = 1'b1; m3.grant = 1'b0;
-            m2_bid = m2_req_reg - m2.req;
-            counter2 = 0;
-            if (m2_bid < 1) m2_bid = 1;
-         end
-         else if(counter3 == 60) begin
-            m0.grant = 1'b0; m1.grant = 1'b0; m2.grant = 1'b0; m3.grant = 1'b1;
-            m3_bid = m3_req_reg - m3.req;
-            counter3 = 0;
-            if (m3_bid < 1) m3_bid = 1;
-         end */
-         
-         
+		
         if (m3.grant == 1) begin
             if (m3.addr == 32'hFFEF_0230) begin
                 s0.RW = m3.RW; s0.sel = 1'b1; s1.sel = 1'b0; s2.sel = 1'b0; s3.sel = 1'b0;

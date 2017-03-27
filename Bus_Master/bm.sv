@@ -8,11 +8,10 @@ module noc (nocif n, crc_if c);
     logic fifo_full, fifo_empty, Status_08, Status_0C;
     logic  write_en, read_en;
     
-    /////////////////Bus MAster Variables//////////////////////
+    /////////////////Bus Master Variables//////////////////////
     logic  write_en_bm, read_en_bm;
     logic fifo_full_bm, fifo_empty_bm;
     logic [7:0] source_id_bm, Length_bm, Test_bm;
-    //logic [47:0] data_bm_reg_pack, data_from_fifo_bm;
     logic [7:0] data_bm_reg_0, data_bm_reg_1, data_bm_reg_2, data_bm_reg_3, data_bm_reg_0_F4, data_bm_reg_1_F4, data_bm_reg_2_F4, data_bm_reg_3_F4;
     logic [31:0] data_bm_reg, data_bm_reg_F4;
     logic [4:0] counter;
@@ -25,9 +24,6 @@ module noc (nocif n, crc_if c);
     
     typedef enum logic [4:0] {data_bm_0_F4, data_bm_1_F4, data_bm_2_F4, data_bm_3_F4, data_bm_4_F4} data_st_F4;
     data_st_F4 data_bm_st_F4;
-    
-    /*typedef enum logic [2:0] {IDLE_RESP_BM, READ_RESP_BM, WRITE_RESP_BM} bm_resp_st;
-    bm_resp_st bm_resp; */
     
     typedef enum logic [5:0] {state_0_bm, state_1_bm, state_2_bm, state_3_bm, state_4_bm, state_5_bm} state_bm;
     state_bm data_read_bm;
@@ -58,10 +54,7 @@ module noc (nocif n, crc_if c);
     data_write_resp data_write;
     
     fifo f1 (n.clk, n.rst, write_en, read_en, reg_data1, fifo_full, fifo_empty, Data_Read_Resp);
-    
-    /*fifo_bm f2 (n.clk, n.rst, write_en_bm, read_en_bm, data_bm_reg_pack, fifo_full_bm, fifo_empty_bm, data_from_fifo_bm);*/
-    
-    
+ 
 always @ (posedge n.clk or posedge n.rst) begin
     if (n.rst == 1'b1) begin
             addr0 <= 8'b0000_0000; addr1 <= 8'b0000_0000; addr2 <= 8'b0000_0000;
@@ -107,14 +100,7 @@ always @ (posedge n.clk or posedge n.rst) begin
            if (fifo_empty != 1'b1) begin
                 read_en <= 1'b1;
            end
-           
-          /* if (fifo_empty_bm != 1'b1) begin
-                read_en_bm <= 1'b1;
-           end */
-           
-//            if(END_CODE_FLAG <= 1'b1)
-//                 bm_state <= IDLE_BM;
-            
+		   
             case (w_state)
             IDLE : begin
                         c.Sel <= 1'b0; c.RW <= 1'b0; write_en <= 1'b0;
@@ -323,12 +309,10 @@ always @ (posedge n.clk or posedge n.rst) begin
                                                             if(data_bm_reg_F4 != 32'h0000_0000) begin
                                                                 counter <= 0;
                                                                 if(counter == 0) begin
-                                                                    //n.CmdR <= 1'b1;
                                                                     n.DataR <= data_bm_reg_0;
                                                                     counter++;
                                                                 end
                                                                 else if(counter == 1) begin
-                                                                    //n.CmdR <= 1'b0;
                                                                     n.DataR <= data_bm_reg_1;
                                                                     counter++;
                                                                 end
@@ -338,13 +322,11 @@ always @ (posedge n.clk or posedge n.rst) begin
                                                                 end
                                                                 else if(counter == 3) begin
                                                                     n.DataR <= data_bm_reg_3;
-                                                                    //counter <= 0;
                                                                 end
                                                             end
                                                             else if (data_bm_reg_F4 == 32'h0000_0000) begin
                                                                     w_state <= IDLE;
                                                             end
-                                                            //w_state <= IDLE;
                                                         end
                                            endcase
                                         end
@@ -381,15 +363,15 @@ always @ (posedge n.clk or posedge n.rst) begin
                                       end
                             state_3 : begin
                                              n.DataR <= Data_Read_Resp[71:64];
-                                             data_read <= state_4;                               //1st part of Data Read
+                                             data_read <= state_4;                      //1st part of Data Read
                                       end
                             state_4 : begin
                                             n.DataR <= Data_Read_Resp[79:72];
-                                            data_read <= state_5;                               //2nd part of Data Read
+                                            data_read <= state_5;                       //2nd part of Data Read
                                        end
                             state_5 : begin
                                             n.DataR <= Data_Read_Resp[87:80];
-                                            data_read <= state_6;                               //3rd part of Data read
+                                            data_read <= state_6;                       //3rd part of Data read
                                       end
                             state_6 : begin
                                             if (readlen_1 == 8'h04) begin
@@ -399,29 +381,29 @@ always @ (posedge n.clk or posedge n.rst) begin
                                                 resp_state <= END_CODE;
                                             end
                                             else begin
-                                                n.DataR <= Data_Read_Resp[95:88];            //4th part of data Read, Data read complete for Length 04
+                                                n.DataR <= Data_Read_Resp[95:88];       //4th part of data Read, Data read complete for Length 04
                                                 data_read <= state_7;
-                                                                                            //4th part of data Read, Data read complete for Length 04
+                                                                                        //4th part of data Read, Data read complete for Length 04
                                             end
                                       end
                             state_7 : begin
                                             n.DataR <= Data_Read_Resp[39:32];
                                             data_read <= state_8;
-                                                                                            // Now 2nd data for Legth 08 and 0C, 1st part of data read
+                                                                                        // Now 2nd data for Legth 08 and 0C, 1st part of data read
                                       end
                             state_8 : begin
                                             n.DataR <= Data_Read_Resp[47:40];           // Now 2nd data for Legth 08 and 0C, 2nd part of data read
-                                            data_read <= state_9;                         // Now 2nd data for Legth 08 and 0C, 2nd part of data read
+                                            data_read <= state_9;                       // Now 2nd data for Legth 08 and 0C, 2nd part of data read
                                       end
                             state_9 : begin
                                             n.DataR <= Data_Read_Resp[55:48];           // Now 2nd data for Legth 08 and 0C, 3rd part of data read
-                                            data_read <= state_10;                        // Now 2nd data for Legth 08 and 0C, 3rd part of data read
+                                            data_read <= state_10;                      // Now 2nd data for Legth 08 and 0C, 3rd part of data read
                                       end
                             state_10 : begin
                                             if (readlen_1 == 8'h08) begin
-                                                n.DataR <= Data_Read_Resp[63:56];// Now 2nd data for Legth 08 and 0C, 4th part of data read
+                                                n.DataR <= Data_Read_Resp[63:56];		// Now 2nd data for Legth 08 and 0C, 4th part of data read
                                                 read_en <= 1'b0;
-                                                data_read <= state_0;                        // Data Read complete for Length 08
+                                                data_read <= state_0;                   // Data Read complete for Length 08
                                                 resp_state <= END_CODE;
                                             end
                                             else  begin
@@ -441,7 +423,7 @@ always @ (posedge n.clk or posedge n.rst) begin
                                                 n.DataR <= Data_Read_Resp[23:16];
                                                 data_read <= state_14;
                                       end
-                           state_14 : begin                                              // Now 3rd data for Legth 0C, 4th part of data read
+                           state_14 : begin                                             // Now 3rd data for Legth 0C, 4th part of data read
                                               n.DataR <= Data_Read_Resp[31:24];         //Data Read complete for Length 0C
                                                 data_read <= state_0;
                                                 resp_state <= END_CODE;
@@ -475,88 +457,6 @@ always @ (posedge n.clk or posedge n.rst) begin
                             resp_state <= IDLE_RESP;
                        end
           endcase
-
-
-        /*case(bm_resp)
-                IDLE_RESP_BM : begin
-                                    n.CmdR <= 1'b1; n.DataR <= 8'b0000_0000;
-                                    if (data_from_fifo_bm[47:40] == 8'hF0)
-                                        bm_resp <= READ_RESP_BM;
-                                    else if(data_from_fifo_bm[47:40] == 8'hF4)
-                                        bm_resp <= WRITE_RESP_BM;
-                                        
-                                    if(data_from_fifo_bm[47:40] == 8'hF4 && data_from_fifo_bm[31:0] != 32'h0000_0000)
-                                        bm_resp <= READ_RESP_BM;
-                                    else bm_resp <= IDLE_RESP_BM;
-                               end
-                READ_RESP_BM : begin
-                                    case(data_read_bm)
-                                        state_0_bm : begin
-                                                            n.CmdR <= 1'b1; read_en_bm <= 1'b1;
-                                                            n.DataR <= data_from_fifo_bm[47:40];
-                                                            data_read_bm <= state_1_bm;
-                                                     end
-                                        state_1_bm : begin
-                                                            n.CmdR <= 1'b0; read_en_bm <= 1'b0;
-                                                            n.DataR <= data_from_fifo_bm[39:32];
-                                                            data_read_bm <= state_2_bm;
-                                                     end
-                                        state_2_bm : begin
-                                                            n.DataR <= data_from_fifo_bm[7:0];
-                                                            data_read_bm <= state_3_bm;
-                                                     end
-                                        state_3_bm : begin
-                                                            n.DataR <= data_from_fifo_bm[15:8];
-                                                            data_read_bm <= state_4_bm;
-                                                     end
-                                        state_4_bm : begin
-                                                            n.DataR <= data_from_fifo_bm[23:16];
-                                                            data_read_bm <= state_5_bm;
-                                                     end             
-                                        state_5_bm : begin
-                                                            n.DataR <= data_from_fifo_bm[31:24];
-                                                            data_read_bm <= state_0_bm;
-                                                            bm_resp <= IDLE_RESP_BM;
-                                                     end
-                                        endcase
-                               end
-               WRITE_RESP_BM : begin
-                                    if(data_from_fifo_bm[31:0] != 32'h0000_0000)
-                                        bm_resp <= READ_RESP_BM;
-                                    else bm_resp <= IDLE_RESP_BM;
-                               end
-                                    
-                                    case(data_write_bm)
-                                        state_w0_bm : begin
-                                                            //n.CmdR <= 1'b1; read_en_bm <= 1'b1;
-                                                            n.DataR <= data_from_fifo_bm[47:40];
-                                                            data_write_bm <= state_w1_bm;
-                                                     end
-                                        state_w1_bm : begin
-                                                            //n.CmdR <= 1'b0; read_en_bm <= 1'b0;
-                                                            n.DataR <= data_from_fifo_bm[39:32];
-                                                            data_write_bm <= state_w2_bm;
-                                                     end
-                                        state_w2_bm : begin
-                                                            //n.DataR <= data_from_fifo_bm[7:0];
-                                                            data_write_bm <= state_w3_bm;
-                                                     end
-                                        state_w3_bm : begin
-                                                            //n.DataR <= data_from_fifo_bm[15:8];
-                                                            data_write_bm <= state_w4_bm;
-                                                     end
-                                        state_w4_bm : begin
-                                                            //n.DataR <= data_from_fifo_bm[23:16];
-                                                            data_write_bm <= state_w5_bm;
-                                                     end             
-                                        state_w5_bm : begin
-                                                            //n.DataR <= data_from_fifo_bm[31:24];
-                                                            data_write_bm <= state_w0_bm;
-                                                            bm_resp <= IDLE_RESP_BM;
-                                                     end
-                                        endcase
-                               end
-        endcase */
     end
     end
     always @(posedge c.clk or posedge c.rst) begin
@@ -593,7 +493,6 @@ endmodule : noc
 module fifo (clk, rst, write_en, read_en, data_from_crc, fifo_full, fifo_empty, data_out);
 parameter width = 120;
 parameter depth = 20;
-
 
     input clk, rst, write_en, read_en;
     input [width-1:0] data_from_crc;
@@ -632,47 +531,3 @@ parameter depth = 20;
         end
    end
 endmodule : fifo
-
-
-/*module fifo_bm (clk, rst, write_en_bm, read_en_bm, data_from_noc, fifo_full_bm, fifo_empty_bm, data_out_bm);
-parameter width = 48;
-parameter depth = 20;
-
-
-    input clk, rst, write_en_bm, read_en_bm;
-    input [width-1:0] data_from_noc;
-    output fifo_full_bm, fifo_empty_bm;
-    output reg [width-1:0] data_out_bm;
-    reg [width-1:0] FIFO_data1_bm[depth-1:0];
-    reg [3:0] rd_ptr_bm, wr_ptr_bm;
-
-
-    assign fifo_full_bm = ((wr_ptr_bm == 20) && (rd_ptr_bm == 0))?1:((rd_ptr_bm == wr_ptr_bm +1)?1:0);
-    assign fifo_empty_bm = (rd_ptr_bm == wr_ptr_bm)?1:0;
-    
-    always @(posedge clk or posedge rst) begin
-        if (rst == 1'b1) begin
-            wr_ptr_bm <= 0;
-            rd_ptr_bm <= 0;
-            data_out_bm <= 0;
-        end
-        else begin
-             if (read_en_bm == 1'b1 && fifo_empty_bm == 1'b0) begin
-                    data_out_bm <= FIFO_data1_bm[rd_ptr_bm];
-                    rd_ptr_bm <= rd_ptr_bm + 1;
-                  end
-             else begin
-                    data_out_bm <= data_out_bm;
-                    rd_ptr_bm <= rd_ptr_bm;
-                  end
-             if (write_en_bm == 1'b1 && fifo_full_bm == 1'b0) begin
-                    FIFO_data1_bm[wr_ptr_bm] <= data_from_noc;
-                    wr_ptr_bm <= wr_ptr_bm +1;
-                  end
-             else begin
-                    FIFO_data1_bm[wr_ptr_bm] <= FIFO_data1_bm[wr_ptr_bm];
-                    wr_ptr_bm <= wr_ptr_bm;
-                  end
-        end
-   end
-endmodule : fifo_bm */
